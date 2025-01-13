@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 const db = require('./config/database');
 
 // Authenticate the connection to the database
@@ -23,6 +24,7 @@ db.sync({ force: false }) // Set force: true to drop and recreate tables (use wi
 const app = express();
 
 // Middleware
+app.use(cors()); // Enable CORS
 app.use(bodyParser.json()); // Parse JSON request bodies
 app.use(bodyParser.urlencoded({ extended: true })); // Parse URL-encoded request bodies
 
@@ -46,15 +48,15 @@ app.get('/', (req, res) => {
 });
 
 // Todo routes
-app.use('/todos', require('./routes/todo')); // Mount todo routes under /todos
+app.use('/api/todos', require('./routes/todo')); // Mount todo routes under /todos
 
 // User routes
-app.use('/users', require('./routes/user')); // Mount user routes under /users
+app.use('/api/users', require('./routes/user')); // Mount user routes under /users
 
+//auth use
+app.use('/api/auth', require('./routes/auth'));
 // Define the port
 const PORT = process.env.PORT || 5051;
-
-// Start the server
-app.listen(PORT, () => {
-    console.log(`Server started on port ${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Server started on http://192.168.1.20:${PORT}`);
 });
